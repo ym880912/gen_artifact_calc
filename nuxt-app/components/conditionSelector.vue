@@ -77,12 +77,12 @@
                         <el-tooltip
                             class="box-item"
                             effect="light"
-                            placement="right-start"
+                            placement="right-end"
                             :content="'4オプション聖遺物は部位・メインOP・サブOPに関わらす一律'+OP4_PROB+'%で出現するとした場合'"
                         >
                             <el-checkbox
                                 v-model="allowOp3"
-                                label="ドロップ時に３オプションのみの聖遺物を含む"
+                                label="ドロップ時にサブオプションが３つだけの聖遺物を含む"
                                 size="large"
                                 v-on:change="chainAllowLeveling"
                             />
@@ -94,7 +94,7 @@
                     <el-col :span="20">
                         <el-checkbox
                             v-model="allowLeveling"
-                            label="レベリングでの追加分のオプションを含む"
+                            label="４レベルで追加される４つ目のサブオプションを条件に含む"
                             size="large"
                             :disabled="!allowOp3"
                         />
