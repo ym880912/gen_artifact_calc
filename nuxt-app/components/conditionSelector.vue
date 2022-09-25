@@ -41,7 +41,16 @@
                                         :key="item"
                                         :label="item.label"
                                         :value="item"
-                                    />
+                                    >
+                                        <span style="float: left">{{ item.label }}</span>
+                                        <span
+                                            style="
+                                                float: right;
+                                                color: var(--el-text-color-secondary);
+                                                font-size: 11px;
+                                            "
+                                        >{{ item.prob.toFixed(2) }}%</span>
+                            </el-option>
                                 </template>
                             </template>
                         </el-select>
@@ -66,7 +75,17 @@
                                 :label="item.label"
                                 :value="item"
                                 :disabled="mainOp && item.label===mainOp.label"
-                            />
+                            >
+                                <span style="float: left">{{ item.label }}</span>
+                                <span
+                                    style="
+                                        float: right;
+                                        color: var(--el-text-color-secondary);
+                                        font-size: 11px;
+                                        margin-right: 30px;
+                                    "
+                                >{{ item.prob.toFixed(2) }}%</span>
+                            </el-option>
                         </el-select>
                         <span> をすべて含む</span>
                     </el-col>
