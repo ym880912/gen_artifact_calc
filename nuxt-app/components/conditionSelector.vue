@@ -4,7 +4,7 @@
             <ClientOnly>
                 <el-row class="card-content">
                     <el-col :span="4">
-                        <span>聖遺物種類</span>
+                        <span>聖遺物部位</span>
                     </el-col>
                     <el-col :span="20">
                         <el-select
@@ -74,12 +74,19 @@
                 <el-row class="card-content">
                     <el-col :span="4"/>
                     <el-col :span="20">
-                        <el-checkbox
-                            v-model="allowOp3"
-                            label="ドロップ時に３オプションのみの聖遺物を含む"
-                            size="large"
-                            v-on:change="chainAllowLeveling"
-                        />
+                        <el-tooltip
+                            class="box-item"
+                            effect="light"
+                            placement="right-start"
+                            :content="'4オプション聖遺物は部位・メインOP・サブOPに関わらす一律'+OP4_PROB+'%で出現するとした場合'"
+                        >
+                            <el-checkbox
+                                v-model="allowOp3"
+                                label="ドロップ時に３オプションのみの聖遺物を含む"
+                                size="large"
+                                v-on:change="chainAllowLeveling"
+                            />
+                        </el-tooltip>
                     </el-col>
                 </el-row>
                 <el-row class="card-content">
@@ -110,8 +117,8 @@
                     <span>秘境周回期待値</span>
                 </el-col>
                 <el-col :span="18">
-                    <template v-if="totalProb && totalProb != 0"><span>{{resinExpected.toFixed(0)}} 樹脂</span></template>
-                    <template v-else>-- 樹脂</template>
+                    <template v-if="totalProb && totalProb != 0"><span>{{resinExpected.toFixed(0)}} 天然樹脂</span></template>
+                    <template v-else>-- 天然樹脂</template>
                 </el-col>
             </el-row>
             <el-row class="card-content">
