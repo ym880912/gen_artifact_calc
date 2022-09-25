@@ -49,7 +49,7 @@
                                                 color: var(--el-text-color-secondary);
                                                 font-size: 11px;
                                             "
-                                        >{{ item.prob.toFixed(2) }}%</span>
+                                        >{{ item.prob.toFixed(2) }} %</span>
                             </el-option>
                                 </template>
                             </template>
@@ -84,7 +84,10 @@
                                         font-size: 11px;
                                         margin-right: 30px;
                                     "
-                                >{{ item.prob.toFixed(2) }}%</span>
+                                >
+                                    <template v-if="mainOp.label === item.label || subOps.find(sub => sub.label === item.label)">selected</template>
+                                    <template v-else-if="subOps.length < 4">{{ (item.prob * 100 / unSelectedToltalProb).toFixed(2) }} %</template>
+                                </span>
                             </el-option>
                         </el-select>
                         <span> をすべて含む</span>
@@ -233,7 +236,12 @@
             subOps.value.splice(index, 1);
         }
     }
-    const totalProb = computed(()=>{
+    const unSelectedToltalProb = computed(() => {
+        const unSelectedOptions =  subOptions.filter(op => mainOp.value.label !== op.label && !subOps.value.find(sub => sub.label === op.label))
+        // console.log(subOps.value, unSelectedOptions);
+        return unSelectedOptions.reduce((sum, op) => sum + op.prob, 0)
+    })
+    const totalProb = computed(() => {
         let mainProb = 1
         if (!mainOp.value) {
             return null
@@ -251,23 +259,23 @@
         }
         else {
             const remainSubOptions = subOptions.filter((op) => !mainOp.value || op.label !== mainOp.value.label)
-            const totalSubProbs = remainSubOptions.reduce((sum, op) => sum + op.prob, 0)
+            const totalSubProb = remainSubOptions.reduce((sum, op) => sum + op.prob, 0)
 
             let Roll3Map = [];
             let Roll4Map = [];
             remainSubOptions.forEach((roll_1) => {
-                const prob_1 = roll_1.prob / totalSubProbs
+                const prob_1 = roll_1.prob / totalSubProb
                 const remainOp_1 = remainSubOptions.filter(op => op.label !== roll_1.label)
                 remainOp_1.forEach((roll_2) => {
-                    const prob_2 = prob_1 * roll_2.prob / (totalSubProbs - roll_1.prob)
+                    const prob_2 = prob_1 * roll_2.prob / (totalSubProb - roll_1.prob)
                     const remainOp_2 = remainOp_1.filter(op => op.label !== roll_2.label)
                     remainOp_2.forEach((roll_3) => {
-                        const prob_3 = prob_2 * roll_3.prob / (totalSubProbs - roll_1.prob - roll_2.prob)
+                        const prob_3 = prob_2 * roll_3.prob / (totalSubProb - roll_1.prob - roll_2.prob)
                         const remainOp_3 = remainOp_2.filter(op => op.label !== roll_3.label)
                         // OP3時のマップを生成
                         Roll3Map.push({rolls:[roll_1.label, roll_2.label, roll_3.label], prob: prob_3})
                         remainOp_3.forEach((roll_4) => {
-                            const prob_4 = prob_3 * roll_4.prob / (totalSubProbs - roll_1.prob - roll_2.prob - roll_3.prob)
+                            const prob_4 = prob_3 * roll_4.prob / (totalSubProb - roll_1.prob - roll_2.prob - roll_3.prob)
                             // OP4時のマップを生成
                             Roll4Map.push({rolls:[roll_1.label, roll_2.label, roll_3.label, roll_4.label], prob: prob_4})
                         })
