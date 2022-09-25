@@ -113,27 +113,27 @@
 
 <script lang="ts" setup>
     const artifactTypes = [
-        {label: '花', mainOptions:[
+        {label: '生の花', mainOptions:[
             {prob: 100, label: 'HP+',},
         ]},
-        {label: '羽', mainOptions:[
+        {label: '死の羽', mainOptions:[
             {prob: 100, label: '攻撃力+',},
         ]},
-        {label: '砂', mainOptions:[
+        {label: '時の砂', mainOptions:[
             {prob: 80/3, label: 'HP%',},
             {prob: 80/3, label: '攻撃力%',},
             {prob: 80/3, label: '防御力%',},
             {prob: 10, label: '元素熟知',},
             {prob: 10, label: '元素チャージ効率',},
         ]},
-        {label: '杯', mainOptions:[
+        {label: '空の杯', mainOptions:[
             {prob: 19.175, label: 'HP%',},
             {prob: 19.175, label: '攻撃力%',},
             {prob: 19.15, label: '防御力%',},
             {prob: 2.5, label: '元素熟知',},
-            {prob: 5, label: '物理・属性ダメージ',},
+            {prob: 5, label: '各元素・物理ダメージ',},
         ]},
-        {label: '冠', mainOptions:[
+        {label: '理の冠', mainOptions:[
             {prob: 22, label: 'HP%',},
             {prob: 22, label: '攻撃力%',},
             {prob: 22, label: '防御力%',},
