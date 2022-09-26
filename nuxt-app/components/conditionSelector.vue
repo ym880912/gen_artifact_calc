@@ -31,7 +31,6 @@
                             v-model="mainOp"
                             value-key="key"
                             :disabled="artifact.mainOptions.length==1"
-                            v-on:change="clearSub"
                             style="width: 300px"
                         >
                             <template v-for="a in artifactTypes" >
@@ -56,77 +55,12 @@
                         </el-select>
                     </el-col>
                 </el-row>
-                <el-row class="card-content">
-                    <el-col :span="4">
-                        <span>サブOP条件</span>
-                    </el-col>
-                    <el-col :span="20">
-                        <el-select
-                            v-model="subOps"
-                            value-key="key"
-                            multiple
-                            :multiple-limit="4"
-                            style="width: 500px"
-                            placeholder=" "
-                        >
-                            <el-option
-                                v-for="item in subOptions"
-                                :key="item"
-                                :label="item.label"
-                                :value="item"
-                                :disabled="mainOp && item.key===mainOp.key"
-                            >
-                                <span style="float: left">{{ item.label }}</span>
-                                <span
-                                    style="
-                                        float: right;
-                                        color: var(--el-text-color-secondary);
-                                        font-size: 11px;
-                                        margin-right: 30px;
-                                    "
-                                >
-                                    <template v-if="mainOp.key === item.key || subOps.find(sub => sub.key === item.key)">selected</template>
-                                    <template v-else-if="subOps.length < 4">{{ (item.prob * 100 / unSelectedToltalProb).toFixed(2) }} %</template>
-                                </span>
-                            </el-option>
-                        </el-select>
-                        <span> をすべて含む</span>
-                    </el-col>
-                </el-row>
-                <el-row class="card-content">
-                    <el-col :span="4"/>
-                    <el-col :span="20">
-                        <el-tooltip
-                            class="box-item"
-                            effect="light"
-                            placement="right-end"
-                            :content="'4オプション聖遺物は部位・メインOP・サブOPに関わらす一律'+op4Prob+'%で出現するとした場合'"
-                        >
-                            <el-checkbox
-                                v-model="allowOp3"
-                                label="ドロップ時にサブオプションが３つだけの聖遺物を含む"
-                                size="large"
-                                v-on:change="chainAllowLeveling"
-                            />
-                        </el-tooltip>
-                    </el-col>
-                </el-row>
-                <el-row class="card-content">
-                    <el-col :span="4"/>
-                    <el-col :span="20">
-                        <el-checkbox
-                            v-model="allowLeveling"
-                            label="４レベルで追加される４つ目のサブオプションを条件に含む"
-                            size="large"
-                            :disabled="!allowOp3"
-                        />
-                    </el-col>
-                </el-row>
-                <!-- <sub-option-conditions
+            </ClientOnly>
+            <sub-option-conditions
                     :main-op="mainOp"
                     :roll-map="rollMap"
-                /> -->
-            </ClientOnly>
+                    ref="subRef"
+                />
         </el-card>
         <el-card class="box-card">
             <el-row class="card-content">
@@ -177,31 +111,13 @@
 <script lang="ts" setup>
     import { artifactTypes, subOptions, op4Prob } from '../const/index'
 
-    const artifact=ref(artifactTypes[0]);
-    const mainOp=ref(artifactTypes[0].mainOptions[0]);
-    const subOps=ref([]);
-    const allowOp3=ref(true)
-    const allowLeveling=ref(true)
-
-    const chainAllowLeveling = () => {
-        allowLeveling.value = allowOp3.value
-    }
+    const artifact = ref(artifactTypes[0]);
+    const mainOp = ref(artifactTypes[0].mainOptions[0]);
+    const subRef = ref(null)
 
     const clearMainAndSub = () => {
         mainOp.value = artifact.value.mainOptions[0]
-        subOps.value = [];
     }
-    const clearSub = () => {
-        const index = subOps.value.findIndex(n => n.key === mainOp.value.key)
-        if (index >= 0) {
-            subOps.value.splice(index, 1);
-        }
-    }
-    const unSelectedToltalProb = computed(() => {
-        const unSelectedOptions =  subOptions.filter(op => mainOp.value.key !== op.key && !subOps.value.find(sub => sub.key === op.key))
-        // console.log(subOps.value, unSelectedOptions);
-        return unSelectedOptions.reduce((sum, op) => sum + op.prob, 0)
-    })
 
     const rollMap = computed(() =>{
         const remainSubOptions = subOptions.filter((op) => !mainOp.value || op.key !== mainOp.value.key)
@@ -239,41 +155,13 @@
         mainProb = mainOp.value.prob /100
 
         let subProb = 0
-        if (!subOps.value || subOps.value.length < 1) {
-            if (allowOp3.value) {
-                subProb = 1
-            } else {
-                subProb = 1 * op4Prob / 100
-            }
-        }
-        else {
-            rollMap.value.forEach((map) => {
-                let includes = true
-                subOps.value.forEach(op => {
-                    includes = includes && map.r3List.includes(op.key)
-                })
-                if (includes) {
-                    if (allowOp3.value) {
-                        subProb += map.prob
-                    } else {
-                        subProb += map.prob * op4Prob /100
-                    }
-                } else {
-                    let r4includes = true
-                    subOps.value.forEach(op => {
-                        r4includes = r4includes && map.r4List.includes(op.key)
-                    })
-                    if (r4includes) {
-                        if (allowOp3.value && allowLeveling.value) {
-                            subProb += map.prob
-                        } else {
-                            subProb += map.prob * op4Prob /100
-                        }
-                    }
-                }
-            })
-        }
-        console.log('subProb',subProb)
+
+        rollMap.value.forEach((map) => {
+            // console.log('test', subRef.value?.checkProb(map))
+            subProb += subRef.value?.checkProb(map)
+        })
+
+        // console.log('subProb',subProb)
 
         return 1/5 * mainProb * subProb;
     })
@@ -283,4 +171,5 @@
     const strongBoxExpected = computed(()=>{
         return 1 / totalProb.value
     })
+
 </script>
