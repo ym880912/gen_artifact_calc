@@ -9,7 +9,7 @@
                     <el-col :span="20">
                         <el-select
                             v-model="artifact"
-                            value-key="label"
+                            value-key="key"
                             v-on:change="clearMainAndSub"
                             style="width: 300px"
                         >
@@ -29,13 +29,13 @@
                     <el-col :span="20">
                         <el-select
                             v-model="mainOp"
-                            value-key="label"
+                            value-key="key"
                             :disabled="artifact.mainOptions.length==1"
                             v-on:change="clearSub"
                             style="width: 300px"
                         >
                             <template v-for="a in artifactTypes" >
-                                <template v-if="a.label === artifact.label">
+                                <template v-if="a.key === artifact.key">
                                     <el-option
                                         v-for="item in a.mainOptions"
                                         :key="item"
@@ -63,7 +63,7 @@
                     <el-col :span="20">
                         <el-select
                             v-model="subOps"
-                            value-key="label"
+                            value-key="key"
                             multiple
                             :multiple-limit="4"
                             style="width: 500px"
@@ -74,7 +74,7 @@
                                 :key="item"
                                 :label="item.label"
                                 :value="item"
-                                :disabled="mainOp && item.label===mainOp.label"
+                                :disabled="mainOp && item.key===mainOp.key"
                             >
                                 <span style="float: left">{{ item.label }}</span>
                                 <span
@@ -85,7 +85,7 @@
                                         margin-right: 30px;
                                     "
                                 >
-                                    <template v-if="mainOp.label === item.label || subOps.find(sub => sub.label === item.label)">selected</template>
+                                    <template v-if="mainOp.key === item.key || subOps.find(sub => sub.key === item.key)">selected</template>
                                     <template v-else-if="subOps.length < 4">{{ (item.prob * 100 / unSelectedToltalProb).toFixed(2) }} %</template>
                                 </span>
                             </el-option>
@@ -100,7 +100,7 @@
                             class="box-item"
                             effect="light"
                             placement="right-end"
-                            :content="'4オプション聖遺物は部位・メインOP・サブOPに関わらす一律'+OP4_PROB+'%で出現するとした場合'"
+                            :content="'4オプション聖遺物は部位・メインOP・サブOPに関わらす一律'+op4Prob+'%で出現するとした場合'"
                         >
                             <el-checkbox
                                 v-model="allowOp3"
@@ -122,6 +122,10 @@
                         />
                     </el-col>
                 </el-row>
+                <!-- <sub-option-conditions
+                    :main-op="mainOp"
+                    :roll-map="rollMap"
+                /> -->
             </ClientOnly>
         </el-card>
         <el-card class="box-card">
@@ -170,57 +174,14 @@
 }
 </style>
 
-
 <script lang="ts" setup>
-    const artifactTypes = [
-        {label: '生の花', mainOptions:[
-            {prob: 100, label: 'HP+',},
-        ]},
-        {label: '死の羽', mainOptions:[
-            {prob: 100, label: '攻撃力+',},
-        ]},
-        {label: '時の砂', mainOptions:[
-            {prob: 80/3, label: 'HP%',},
-            {prob: 80/3, label: '攻撃力%',},
-            {prob: 80/3, label: '防御力%',},
-            {prob: 10, label: '元素熟知',},
-            {prob: 10, label: '元素チャージ効率',},
-        ]},
-        {label: '空の杯', mainOptions:[
-            {prob: 19.175, label: 'HP%',},
-            {prob: 19.175, label: '攻撃力%',},
-            {prob: 19.15, label: '防御力%',},
-            {prob: 2.5, label: '元素熟知',},
-            {prob: 5, label: '特定の元素・物理ダメージ',},
-        ]},
-        {label: '理の冠', mainOptions:[
-            {prob: 22, label: 'HP%',},
-            {prob: 22, label: '攻撃力%',},
-            {prob: 22, label: '防御力%',},
-            {prob: 4, label: '元素熟知',},
-            {prob: 10, label: '会心率',},
-            {prob: 10, label: '会心ダメージ',},
-            {prob: 10, label: '治癒効果',},
-        ]},
-    ];
-    const subOptions = [
-        {prob: 15, label: 'HP+',},
-        {prob: 10, label: 'HP%',},
-        {prob: 15, label: '攻撃力+',},
-        {prob: 10, label: '攻撃力%',},
-        {prob: 15, label: '防御力+',},
-        {prob: 10, label: '防御力%',},
-        {prob: 10, label: '元素熟知',},
-        {prob: 10, label: '元素チャージ効率',},
-        {prob: 7.5, label: '会心率',},
-        {prob: 7.5, label: '会心ダメージ',},
-    ];
+    import { artifactTypes, subOptions, op4Prob } from '../const/index'
+
     const artifact=ref(artifactTypes[0]);
     const mainOp=ref(artifactTypes[0].mainOptions[0]);
     const subOps=ref([]);
     const allowOp3=ref(true)
     const allowLeveling=ref(true)
-    const OP4_PROB = 40
 
     const chainAllowLeveling = () => {
         allowLeveling.value = allowOp3.value
@@ -231,16 +192,45 @@
         subOps.value = [];
     }
     const clearSub = () => {
-        const index = subOps.value.findIndex(n => n.label === mainOp.value.label)
+        const index = subOps.value.findIndex(n => n.key === mainOp.value.key)
         if (index >= 0) {
             subOps.value.splice(index, 1);
         }
     }
     const unSelectedToltalProb = computed(() => {
-        const unSelectedOptions =  subOptions.filter(op => mainOp.value.label !== op.label && !subOps.value.find(sub => sub.label === op.label))
+        const unSelectedOptions =  subOptions.filter(op => mainOp.value.key !== op.key && !subOps.value.find(sub => sub.key === op.key))
         // console.log(subOps.value, unSelectedOptions);
         return unSelectedOptions.reduce((sum, op) => sum + op.prob, 0)
     })
+
+    const rollMap = computed(() =>{
+        const remainSubOptions = subOptions.filter((op) => !mainOp.value || op.key !== mainOp.value.key)
+        const totalSubProb = remainSubOptions.reduce((sum, op) => sum + op.prob, 0)
+
+        let map = [];
+        remainSubOptions.forEach((roll1) => {
+            const prob1 = roll1.prob / totalSubProb
+            const remainOp1 = remainSubOptions.filter(op => op.key !== roll1.key)
+            remainOp1.forEach((roll2) => {
+                const prob2 = prob1 * roll2.prob / (totalSubProb - roll1.prob)
+                const remainOp2 = remainOp1.filter(op => op.key !== roll2.key)
+                remainOp2.forEach((roll3) => {
+                    const prob3 = prob2 * roll3.prob / (totalSubProb - roll1.prob - roll2.prob)
+                    const remainOp3 = remainOp2.filter(op => op.key !== roll3.key)
+                    remainOp3.forEach((roll4) => {
+                        const prob4 = prob3 * roll4.prob / (totalSubProb - roll1.prob - roll2.prob - roll3.prob)
+                        map.push({
+                            r3List: [roll1.key, roll2.key, roll3.key],
+                            r4List: [roll1.key, roll2.key, roll3.key, roll4.key],
+                            prob: prob4,
+                        })
+                    })
+                })
+            })
+        })
+        return map
+    })
+
     const totalProb = computed(() => {
         let mainProb = 1
         if (!mainOp.value) {
@@ -248,74 +238,42 @@
         }
         mainProb = mainOp.value.prob /100
 
-
         let subProb = 0
         if (!subOps.value || subOps.value.length < 1) {
             if (allowOp3.value) {
                 subProb = 1
             } else {
-                subProb = 1 * OP4_PROB / 100
+                subProb = 1 * op4Prob / 100
             }
         }
         else {
-            const remainSubOptions = subOptions.filter((op) => !mainOp.value || op.label !== mainOp.value.label)
-            const totalSubProb = remainSubOptions.reduce((sum, op) => sum + op.prob, 0)
-
-            let Roll3Map = [];
-            let Roll4Map = [];
-            remainSubOptions.forEach((roll_1) => {
-                const prob_1 = roll_1.prob / totalSubProb
-                const remainOp_1 = remainSubOptions.filter(op => op.label !== roll_1.label)
-                remainOp_1.forEach((roll_2) => {
-                    const prob_2 = prob_1 * roll_2.prob / (totalSubProb - roll_1.prob)
-                    const remainOp_2 = remainOp_1.filter(op => op.label !== roll_2.label)
-                    remainOp_2.forEach((roll_3) => {
-                        const prob_3 = prob_2 * roll_3.prob / (totalSubProb - roll_1.prob - roll_2.prob)
-                        const remainOp_3 = remainOp_2.filter(op => op.label !== roll_3.label)
-                        // OP3時のマップを生成
-                        Roll3Map.push({rolls:[roll_1.label, roll_2.label, roll_3.label], prob: prob_3})
-                        remainOp_3.forEach((roll_4) => {
-                            const prob_4 = prob_3 * roll_4.prob / (totalSubProb - roll_1.prob - roll_2.prob - roll_3.prob)
-                            // OP4時のマップを生成
-                            Roll4Map.push({rolls:[roll_1.label, roll_2.label, roll_3.label, roll_4.label], prob: prob_4})
-                        })
-                    })
-                })
-            })
-            let roll4Prob = 0
-            Roll4Map.forEach((map) => {
+            rollMap.value.forEach((map) => {
                 let includes = true
                 subOps.value.forEach(op => {
-                    includes = includes && map.rolls.includes(op.label)
-                });
+                    includes = includes && map.r3List.includes(op.key)
+                })
                 if (includes) {
-                    roll4Prob += map.prob
+                    if (allowOp3.value) {
+                        subProb += map.prob
+                    } else {
+                        subProb += map.prob * op4Prob /100
+                    }
+                } else {
+                    let r4includes = true
+                    subOps.value.forEach(op => {
+                        r4includes = r4includes && map.r4List.includes(op.key)
+                    })
+                    if (r4includes) {
+                        if (allowOp3.value && allowLeveling.value) {
+                            subProb += map.prob
+                        } else {
+                            subProb += map.prob * op4Prob /100
+                        }
+                    }
                 }
             })
-            if (!allowOp3.value) {
-                subProb = roll4Prob * OP4_PROB / 100
-            }
-            else {
-                if (allowLeveling.value) {
-                    subProb = roll4Prob
-                }
-                else {
-                    let roll3Prob = 0
-                    Roll3Map.forEach((map) => {
-                        let includes = true
-                        subOps.value.forEach(op => {
-                            includes = includes && map.rolls.includes(op.label)
-                        });
-                        if (includes) {
-                            roll3Prob += map.prob
-                        }
-                    })
-                    subProb = roll3Prob * (1 - OP4_PROB / 100) + roll4Prob * OP4_PROB / 100
-                }
-            }
-
         }
-        // console.log('subProb',subProb)
+        console.log('subProb',subProb)
 
         return 1/5 * mainProb * subProb;
     })
