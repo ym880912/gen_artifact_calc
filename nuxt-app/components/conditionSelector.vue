@@ -10,7 +10,7 @@
                         <el-select
                             v-model="artifact"
                             value-key="key"
-                            v-on:change="clearMainAndSub"
+                            v-on:change="chainMainAndSub"
                             style="width: 300px"
                         >
                             <el-option
@@ -31,6 +31,7 @@
                             v-model="mainOp"
                             value-key="key"
                             :disabled="artifact.mainOptions.length==1"
+                            v-on:change="chainSub"
                             style="width: 300px"
                         >
                             <template v-for="a in artifactTypes" >
@@ -169,8 +170,12 @@
     })
 
     // Method
-    const clearMainAndSub = () => {
+    const chainMainAndSub = () => {
         mainOp.value = artifact.value.mainOptions[0]
+        chainSub()
+    }
+    const chainSub = () =>{
+        subRef.value?.removeDuplicate(mainOp.value.key)
     }
 
 </script>

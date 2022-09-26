@@ -93,15 +93,15 @@
         // console.log(subOps.value, unSelectedOptions);
         return unSelectedOptions.reduce((sum, op) => sum + op.prob, 0)
     })
-
-    const chainAllowLeveling = () => {
-        allowLeveling.value = allowOp3.value
-    }
-
     const totalProb = computed(() => {
 
         return 1;
     })
+
+    // Method
+    const chainAllowLeveling = () => {
+        allowLeveling.value = allowOp3.value
+    }
 
     const checkProb = (roll: object): number => {
 
@@ -133,6 +133,13 @@
         return prob
     }
 
-    defineExpose({ checkProb })
+    const removeDuplicate = (key: string) => {
+        const index = subOps.value.findIndex(n => n.key === key)
+        if (index >= 0) {
+            subOps.value.splice(index, 1);
+        }
+    }
+
+    defineExpose({ checkProb, removeDuplicate })
 
 </script>
