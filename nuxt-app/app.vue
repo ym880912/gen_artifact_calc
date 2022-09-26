@@ -1,7 +1,12 @@
 <template>
-  <div>
-    <NuxtPage />
-  </div>
+  <HTML lang="ja">
+    <Head>
+      <Title>聖遺物ドロップ率計算機</Title>
+    </Head>
+    <body>
+      <NuxtPage />
+    </body>
+  </HTML>
 </template>
 
 <script setup>
