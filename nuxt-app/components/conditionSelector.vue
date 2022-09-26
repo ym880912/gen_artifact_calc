@@ -111,14 +111,12 @@
 <script lang="ts" setup>
     import { artifactTypes, subOptions, op4Prob } from '../const/index'
 
+    // Data
     const artifact = ref(artifactTypes[0]);
     const mainOp = ref(artifactTypes[0].mainOptions[0]);
     const subRef = ref(null)
 
-    const clearMainAndSub = () => {
-        mainOp.value = artifact.value.mainOptions[0]
-    }
-
+    // Computed
     const rollMap = computed(() =>{
         const remainSubOptions = subOptions.filter((op) => !mainOp.value || op.key !== mainOp.value.key)
         const totalSubProb = remainSubOptions.reduce((sum, op) => sum + op.prob, 0)
@@ -155,12 +153,10 @@
         mainProb = mainOp.value.prob /100
 
         let subProb = 0
-
         rollMap.value.forEach((map) => {
             // console.log('test', subRef.value?.checkProb(map))
             subProb += subRef.value?.checkProb(map)
         })
-
         // console.log('subProb',subProb)
 
         return 1/5 * mainProb * subProb;
@@ -171,5 +167,10 @@
     const strongBoxExpected = computed(()=>{
         return 1 / totalProb.value
     })
+
+    // Method
+    const clearMainAndSub = () => {
+        mainOp.value = artifact.value.mainOptions[0]
+    }
 
 </script>
