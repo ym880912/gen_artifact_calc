@@ -11,15 +11,15 @@
                                 :content="'4オプション聖遺物は部位・メインOP・サブOPに関わらす一律'+op4Prob+'%で出現するとした場合'"
                             >
                                 <el-checkbox
-                                    v-model="allowOp3"
+                                    v-model="subCard.allowOp3"
                                     label="ドロップ時にサブオプションが３つだけの聖遺物を含む"
                                     v-on:change="chainAllowLeveling"
                                 />
                             </el-tooltip>
                             <el-checkbox
-                                v-model="allowLeveling"
+                                v-model="subCard.allowLeveling"
                                 label="４レベルで追加される４つ目のサブオプションを条件に含む"
-                                :disabled="!allowOp3"
+                                :disabled="!subCard.allowOp3"
                             />
                         </ClientOnly>
                     </div>
@@ -28,7 +28,12 @@
                 <div class="prob-box">
                     <el-space wrap>
                         <span> {{(totalProb).toFixed(4)}} %</span>
-                        <el-button :icon="Delete" size="small" circle  />
+                        <el-button
+                            :icon="Delete"
+                            size="small"
+                            circle
+                            v-on:click="deleteThis"
+                        />
                     </el-space>
                 </div>
             </el-col>
@@ -37,7 +42,7 @@
                 <el-col :span="11">
                     <ClientOnly>
                         <el-select
-                            v-model="subOps"
+                            v-model="subCard.subOps"
                             value-key="key"
                             multiple
                             :multiple-limit="4"
@@ -60,8 +65,8 @@
                                         margin-right: 10px;
                                     "
                                 >
-                                    <template v-if="item.key === props.mainOp.key || subOps.find(sub => sub.key === item.key)">selected</template>
-                                    <template v-else-if="subOps.length < 4">{{ (item.prob * 100 / unSelectedToltalProb).toFixed(2) }} %</template>
+                                    <template v-if="item.key === props.mainOp.key || subCard.subOps.find(sub => sub.key === item.key)">selected</template>
+                                    <template v-else-if="subCard.subOps.length < 4">{{ (item.prob * 100 / unSelectedToltalProb).toFixed(2) }} %</template>
                                 </span>
                             </el-option>
                         </el-select>
@@ -71,7 +76,7 @@
                     <span> の </span>
                     <ClientOnly>
                         <el-select
-                            v-model="logic"
+                            v-model="subCard.logic"
                             class="input-logic"
                         >
                             <el-option
@@ -127,14 +132,17 @@
     ]
 
     // Data
-    const subOps = ref([]);
-    const logic = ref(logicList[0].key);
-    const allowOp3 = ref(true)
-    const allowLeveling = ref(true)
+    // const subOps = ref([]);
+    // const logic = ref(logicList[0].key);
+    // const allowOp3 = ref(true)
+    // const allowLeveling = ref(true)
+
+    const subCardCount = useSubCardCount()
+    const subCard = useSubCard(0)
 
     // Computed
     const unSelectedToltalProb = computed(() => {
-        const unSelectedOptions =  subOptions.filter(op => !(props.mainOp && props.mainOp.key === op.key) && !subOps.value.find(sub => sub.key === op.key))
+        const unSelectedOptions =  subOptions.filter(op => !(props.mainOp && props.mainOp.key === op.key) && !subCard.subOps.find(sub => sub.key === op.key))
         return unSelectedOptions.reduce((sum, op) => sum + op.prob, 0)
     })
 
@@ -152,7 +160,7 @@
 
     // Method
     const chainAllowLeveling = () => {
-        allowLeveling.value = allowOp3.value
+        subCard.allowLeveling = subCard.allowOp3
     }
 
     const checkProb = (roll: object): number => {
@@ -160,7 +168,7 @@
         let prob = 0
         let r3Count = 0
         let r4Count = 0
-        subOps.value.forEach(op => {
+        subCard.subOps.forEach(op => {
             if (roll.r3List.includes(op.key)) {
                 r3Count++
             }
@@ -168,16 +176,16 @@
                 r4Count++
             }
         })
-
+        // console.log(r3Count, r4Count)
         if (checkLogic(r3Count)) {
-            if (allowOp3.value) {
+            if (subCard.allowOp3) {
                 prob = roll.prob
             } else {
                 prob = roll.prob * op4Prob / 100
             }
         }
         else if (checkLogic(r4Count)) {
-            if (allowOp3.value && allowLeveling.value) {
+            if (subCard.allowOp3 && subCard.allowLeveling) {
                 prob = roll.prob
             } else {
                 prob = roll.prob * op4Prob / 100
@@ -188,9 +196,9 @@
     }
 
     const checkLogic = (count: number) => {
-        switch(logic.value) {
+        switch(subCard.logic) {
             case 'all':
-                return (count >= subOps.value.length)
+                return (count >= subCard.subOps?.length)
                 break
             case 'get1':
                 return  (count >= 1)
@@ -207,10 +215,14 @@
     }
 
     const removeDuplicate = (key: string) => {
-        const index = subOps.value.findIndex(n => n.key === key)
+        const index = subCard.subOps.findIndex(n => n.key === key)
         if (index >= 0) {
-            subOps.value.splice(index, 1);
+            subCard.subOps?.splice(index, 1);
         }
+    }
+
+    const deleteThis = () => {
+        subCardCount.value--
     }
 
     defineExpose({ checkProb, removeDuplicate })

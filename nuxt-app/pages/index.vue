@@ -127,7 +127,8 @@
     // Data
     const artifact = ref(artifactTypes[0])
     const mainOp = ref(artifactTypes[0].mainOptions[0])
-    const subCardCount = ref(1)
+    // const subCardCount = ref(1)
+    const subCardCount = useSubCardCount()
     const subCardRefs = ref([])
     const setSubCardRef = (v) => {
         subCardRefs.value.push(v)
