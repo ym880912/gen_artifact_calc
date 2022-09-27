@@ -17,7 +17,7 @@ export const artifactTypes = [
         {key: 'a%', prob: 19.175, label: '攻撃力%',},
         {key: 'd%', prob: 19.15, label: '防御力%',},
         {key: 'em', prob: 2.5, label: '元素熟知',},
-        {key: 'db', prob: 5, label: '特定の元素・物理ダメージ',},
+        {key: 'db', prob: 5, label: '元素・物理ダメージ',},
     ]},
     {key: 'crown', label: '理の冠', mainOptions:[
         {key: 'h%', prob: 22, label: 'HP%',},

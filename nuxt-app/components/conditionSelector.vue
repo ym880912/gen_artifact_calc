@@ -1,113 +1,117 @@
 <template>
     <div class="content">
-        <el-card class="box-card">
-            <ClientOnly>
-                <el-row class="card-content">
-                    <el-col :span="4">
-                        <span>聖遺物部位</span>
-                    </el-col>
-                    <el-col :span="20">
-                        <el-select
-                            v-model="artifact"
-                            value-key="key"
-                            v-on:change="chainMainAndSub"
-                            class="input-option"
-                        >
-                            <el-option
-                                v-for="item in artifactTypes"
-                                :key="item"
-                                :label="item.label"
-                                :value="item"
-                            />
-                        </el-select>
-                    </el-col>
-                </el-row>
-                <el-row class="card-content">
-                    <el-col :span="4">
-                        <span>メインOP</span>
-                    </el-col>
-                    <el-col :span="20">
-                        <el-select
-                            v-model="mainOp"
-                            value-key="key"
-                            :disabled="artifact.mainOptions.length==1"
-                            v-on:change="chainSub"
-                            class="input-option"
-                        >
-                            <template v-for="a in artifactTypes" >
-                                <template v-if="a.key === artifact.key">
+        <el-row :gutter="20">
+            <el-col :span="18">
+                <el-card class="card-main">
+                    <ClientOnly>
+                        <el-row>
+                            <el-col :span="3">
+                                <span>聖遺物部位</span>
+                            </el-col>
+                            <el-col :span="6">
+                                <el-select
+                                    v-model="artifact"
+                                    value-key="key"
+                                    v-on:change="chainMainAndSub"
+                                    class="input-artifact"
+                                >
                                     <el-option
-                                        v-for="item in a.mainOptions"
+                                        v-for="item in artifactTypes"
                                         :key="item"
                                         :label="item.label"
                                         :value="item"
-                                    >
-                                        <span style="float: left">{{ item.label }}</span>
-                                        <span
-                                            style="
-                                                float: right;
-                                                color: var(--el-text-color-secondary);
-                                                font-size: 11px;
-                                            "
-                                        >{{ item.prob.toFixed(2) }} %</span>
-                            </el-option>
-                                </template>
-                            </template>
-                        </el-select>
-                    </el-col>
-                </el-row>
-            </ClientOnly>
-            <sub-option-conditions
-                    :main-op="mainOp"
-                    :roll-map="rollMap"
-                    ref="subRef"
+                                    />
+                                </el-select>
+                            </el-col>
+                            <el-col :span="3">
+                                <span>メインOP</span>
+                            </el-col>
+                            <el-col :span="9">
+                                <el-select
+                                    v-model="mainOp"
+                                    value-key="key"
+                                    :disabled="artifact.mainOptions.length==1"
+                                    v-on:change="chainSub"
+                                    class="input-main-option"
+                                >
+                                    <template v-for="a in artifactTypes" >
+                                        <template v-if="a.key === artifact.key">
+                                            <el-option
+                                                v-for="item in a.mainOptions"
+                                                :key="item"
+                                                :label="item.label"
+                                                :value="item"
+                                            >
+                                                <span style="float: left">{{ item.label }}</span>
+                                                <span
+                                                    style="
+                                                        float: right;
+                                                        color: var(--el-text-color-secondary);
+                                                        font-size: 11px;
+                                                    "
+                                                >{{ item.prob.toFixed(2) }} %</span>
+                                    </el-option>
+                                        </template>
+                                    </template>
+                                </el-select>
+                            </el-col>
+                        </el-row>
+                    </ClientOnly>
+                    <el-row>
+                        <el-col :span="24">
+                            <span>サブOP</span>
+                        </el-col>
+                    </el-row>
+                    <el-row>
+                        <sub-option-conditions
+                                :main-op="mainOp"
+                                :roll-map="rollMap"
+                                ref="subRef"
+                        />
+                        <el-card class="card-sub-option card-new">
+                            <el-button class="button-or">OR</el-button>
+                        </el-card>
+                    </el-row>
+                </el-card>
+            </el-col>
+            <el-col :span="6">
+                <result-card
+                    :total-prob="totalProb"
                 />
-        </el-card>
-        <el-card class="box-card">
-            <el-row class="card-content">
-                <el-col :span="6">
-                    <span>セット内出現率</span>
-                </el-col>
-                <el-col :span="18">
-                    <span>{{(totalProb).toFixed(4)}} %</span>
-                </el-col>
-            </el-row>
-            <el-row class="card-content">
-                <el-col :span="6">
-                    <span>秘境周回期待値</span>
-                </el-col>
-                <el-col :span="18">
-                    <template v-if="totalProb && totalProb != 0"><span>{{resinExpected.toFixed(0)}} 天然樹脂</span></template>
-                    <template v-else>-- 天然樹脂</template>
-                </el-col>
-            </el-row>
-            <el-row class="card-content">
-                <el-col :span="6">
-                    <span>聖遺物回生期待値</span>
-                </el-col>
-                <el-col :span="18">
-                    <template v-if="totalProb && totalProb != 0"><span>{{strongBoxExpected.toFixed(2)}} 回</span></template>
-                    <template v-else>-- 回</template>
-                </el-col>
-            </el-row>
-        </el-card>
+            </el-col>
+        </el-row>
     </div>
 </template>
+
 <style>
 .content {
-    width: 1000px;
-}
-.box-card {
+    width: 1200px;
     margin: 10px 40px;
 }
-.card-content {
-    margin: 7px 0px;
+.card-main {
+    width: 100%;
 }
-.el-checkbox {
-    --el-checkbox-checked-text-color: var(--el-text-color-regular);
+.input-artifact {
+    width: 150px;
 }
-.input-option {
-    width: 300px;
+.input-main-option {
+    width: 250px;
+}
+.card-sub-option {
+    width: 100%;
+    margin: 10px 10px 0px 10px;
+}
+.card-sub-option:last-child {
+    margin-bottom: 0px;
+}
+.card-sub-option .el-card__body {
+    padding: 10px 5px 15px 20px;
+}
+.card-sub-option.card-new .el-card__body{
+    padding: 5px;
+}
+.card-new {
+    text-align: center;
 }
 </style>
 
@@ -115,12 +119,12 @@
     import { artifactTypes, subOptions } from '../const/index'
 
     // Data
-    const artifact = ref(artifactTypes[0]);
-    const mainOp = ref(artifactTypes[0].mainOptions[0]);
+    const artifact = ref(artifactTypes[0])
+    const mainOp = ref(artifactTypes[0].mainOptions[0])
     const subRef = ref(null)
 
     // Computed
-    const rollMap = computed(() =>{
+    const rollMap = computed(() => {
         const remainSubOptions = subOptions.filter((op) => !mainOp.value || op.key !== mainOp.value.key)
         const totalSubProb = remainSubOptions.reduce((sum, op) => sum + op.prob, 0)
 
@@ -157,13 +161,7 @@
         })
         // console.log('subProb',subProb)
 
-        return 1/5 * mainProb * subProb;
-    })
-    const resinExpected  = computed(()=>{
-        return 40 * 100 / totalProb.value;
-    })
-    const strongBoxExpected = computed(()=>{
-        return 100 / totalProb.value
+        return mainProb * subProb;
     })
 
     // Method
