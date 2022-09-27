@@ -10,8 +10,8 @@
                     value-key="key"
                     multiple
                     :multiple-limit="4"
-                    style="width: 500px"
                     placeholder=" "
+                    class="input-option"
                 >
                     <el-option
                         v-for="item in subOptions"
@@ -34,7 +34,18 @@
                         </span>
                     </el-option>
                 </el-select>
-                <span> をすべて含む</span>
+                <span> の </span>
+                <el-select
+                    v-model="logic"
+                    class="input-logic"
+                >
+                    <el-option
+                        v-for="item in logicList"
+                        :key="item.key"
+                        :label="item.label"
+                        :value="item.key"
+                    />
+                </el-select>
             </el-col>
         </el-row>
         <el-row class="card-content">
@@ -69,8 +80,19 @@
     </ClientOnly>
 </template>
 
+<style>
+    .input-option {
+        width: 300px;
+    }
+    .input-option {
+        width: 200px;
+    }
+
+</style>
+
 <script lang="ts" setup>
-    import { Ref } from 'vue';
+    import { c } from 'unimport/dist/types-43c63a16';
+import { Ref } from 'vue';
     import { artifactTypes, subOptions, op4Prob } from '../const/index'
 
     interface Props {
@@ -81,11 +103,18 @@
         mainOp: artifactTypes[0].mainOptions[0],
         rollMap: [],
     })
+    const logicList = [
+        {key: 'all', label: 'すべてを含む'},
+        {key: 'get1', label: 'のうち１つ以上を含む'},
+        {key: 'get2', label: 'のうち２つ以上を含む'},
+        {key: 'get3', label: 'のうち３つ以上を含む'},
+    ]
 
     // Data
-    const subOps=ref([]);
-    const allowOp3=ref(true)
-    const allowLeveling=ref(true)
+    const subOps = ref([]);
+    const logic = ref(logicList[0].key);
+    const allowOp3 = ref(true)
+    const allowLeveling = ref(true)
 
     // Computed
     const unSelectedToltalProb = computed(() => {
@@ -106,31 +135,52 @@
     const checkProb = (roll: object): number => {
 
         let prob = 0
-        let includes = true
+        let r3Count = 0
+        let r4Count = 0
         subOps.value.forEach(op => {
-            includes = includes && roll.r3List.includes(op.key)
+            if (roll.r3List.includes(op.key)) {
+                r3Count++
+            }
+            if (roll.r4List.includes(op.key)) {
+                r4Count++
+            }
         })
-        if (includes) {
+
+        if (checkLogic(r3Count)) {
             if (allowOp3.value) {
                 prob = roll.prob
             } else {
-                prob = roll.prob * op4Prob /100
+                prob = roll.prob * op4Prob / 100
             }
-        } else {
-            let r4includes = true
-            subOps.value.forEach(op => {
-                r4includes = r4includes && roll.r4List.includes(op.key)
-            })
-            if (r4includes) {
-                if (allowOp3.value && allowLeveling.value) {
-                    prob = roll.prob
-                } else {
-                    prob = roll.prob * op4Prob /100
-                }
+        }
+        else if (checkLogic(r4Count)) {
+            if (allowOp3.value && allowLeveling.value) {
+                prob = roll.prob
+            } else {
+                prob = roll.prob * op4Prob / 100
             }
         }
 
         return prob
+    }
+
+    const checkLogic = (count: number) => {
+        switch(logic.value) {
+            case 'all':
+                return (count >= subOps.value.length)
+                break
+            case 'get1':
+                return  (count >= 1)
+                break
+            case 'get2':
+                return  (count >= 2)
+                break
+            case 'get3':
+                return  (count >= 3)
+                break
+            default:
+                return false
+        }
     }
 
     const removeDuplicate = (key: string) => {

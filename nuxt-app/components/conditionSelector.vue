@@ -69,8 +69,7 @@
                     <span>セット内出現率</span>
                 </el-col>
                 <el-col :span="18">
-                    <template v-if="totalProb"><span>{{(totalProb*100).toFixed(4)}} %</span></template>
-                    <template v-else>-- %</template>
+                    <span>{{(totalProb).toFixed(4)}} %</span>
                 </el-col>
             </el-row>
             <el-row class="card-content">
@@ -110,7 +109,7 @@
 </style>
 
 <script lang="ts" setup>
-    import { artifactTypes, subOptions, op4Prob } from '../const/index'
+    import { artifactTypes, subOptions } from '../const/index'
 
     // Data
     const artifact = ref(artifactTypes[0]);
@@ -124,7 +123,7 @@
 
         let map = [];
         remainSubOptions.forEach((roll1) => {
-            const prob1 = roll1.prob / totalSubProb
+            const prob1 = 100 * roll1.prob / totalSubProb
             const remainOp1 = remainSubOptions.filter(op => op.key !== roll1.key)
             remainOp1.forEach((roll2) => {
                 const prob2 = prob1 * roll2.prob / (totalSubProb - roll1.prob)
@@ -147,15 +146,10 @@
     })
 
     const totalProb = computed(() => {
-        let mainProb = 1
-        if (!mainOp.value) {
-            return null
-        }
-        mainProb = mainOp.value.prob /100
+        const mainProb = mainOp.value.prob / 100
 
         let subProb = 0
         rollMap.value.forEach((map) => {
-            // console.log('test', subRef.value?.checkProb(map))
             subProb += subRef.value?.checkProb(map)
         })
         // console.log('subProb',subProb)
@@ -163,10 +157,10 @@
         return 1/5 * mainProb * subProb;
     })
     const resinExpected  = computed(()=>{
-        return 40 / totalProb.value;
+        return 40 * 100 / totalProb.value;
     })
     const strongBoxExpected = computed(()=>{
-        return 1 / totalProb.value
+        return 100 / totalProb.value
     })
 
     // Method
