@@ -11,7 +11,7 @@
     current: 0
   })
   useHead({
-    title: '聖遺物ドロップ率計算機',
+    title: '聖遺物ドロップ率計算機(α版)',
     htmlAttrs: {
       lang: 'ja',
     }

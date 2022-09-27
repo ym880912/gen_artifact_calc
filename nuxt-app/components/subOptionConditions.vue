@@ -91,8 +91,7 @@
 </style>
 
 <script lang="ts" setup>
-    import { c } from 'unimport/dist/types-43c63a16';
-import { Ref } from 'vue';
+    import { Ref } from 'vue';
     import { artifactTypes, subOptions, op4Prob } from '../const/index'
 
     interface Props {
