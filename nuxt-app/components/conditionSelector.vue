@@ -107,7 +107,7 @@
     --el-checkbox-checked-text-color: var(--el-text-color-regular);
 }
 .input-option {
-    width: 250px;
+    width: 300px;
 }
 </style>
 

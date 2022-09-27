@@ -26,7 +26,7 @@
                                 float: right;
                                 color: var(--el-text-color-secondary);
                                 font-size: 11px;
-                                margin-right: 30px;
+                                margin-right: 10px;
                             "
                         >
                             <template v-if="item.key === props.mainOp.key || subOps.find(sub => sub.key === item.key)">selected</template>
