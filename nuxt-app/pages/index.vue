@@ -63,21 +63,27 @@
                         </el-col>
                     </el-row>
                     <el-row>
-                        <sub-option-or-card
+                        <template
+                            v-for="n of subCardCount"
+                            :key="n-1"
+                        >
+                            <sub-option-or-card
                                 :main-op="mainOp"
                                 :roll-map="rollMap"
-                                ref="subRef"
-                        />
+                                :ref="setSubCardRef"
+                            />
+                        </template>
                         <el-card class="card-sub-option card-new">
-                            <el-button class="button-or">OR</el-button>
+                            <el-button
+                                class="button-or"
+                                v-on:click="setNewSubCard"
+                            >OR</el-button>
                         </el-card>
                     </el-row>
                 </el-card>
             </el-col>
             <el-col :span="6">
-                <result-card
-                    :total-prob="totalProb"
-                />
+                <result-card :total-prob="totalProb" />
             </el-col>
         </el-row>
     </div>
@@ -121,14 +127,17 @@
     // Data
     const artifact = ref(artifactTypes[0])
     const mainOp = ref(artifactTypes[0].mainOptions[0])
-    const subRef = ref(null)
-
+    const subCardCount = ref(1)
+    const subCardRefs = ref([])
+    const setSubCardRef = (v) => {
+        subCardRefs.value.push(v)
+    }
     // Computed
     const rollMap = computed(() => {
         const remainSubOptions = subOptions.filter((op) => !mainOp.value || op.key !== mainOp.value.key)
         const totalSubProb = remainSubOptions.reduce((sum, op) => sum + op.prob, 0)
 
-        let map = [];
+        let map = []
         remainSubOptions.forEach((roll1) => {
             const prob1 = 100 * roll1.prob / totalSubProb
             const remainOp1 = remainSubOptions.filter(op => op.key !== roll1.key)
@@ -157,11 +166,15 @@
 
         let subProb = 0
         rollMap.value.forEach((map) => {
-            subProb += subRef.value?.checkProb(map)
+            let currentProb = 0
+            subCardRefs.value?.forEach((subRef) => {
+                currentProb = Math.max(currentProb, subRef.checkProb(map))
+            })
+            subProb += currentProb
         })
         // console.log('subProb',subProb)
 
-        return mainProb * subProb;
+        return mainProb * subProb
     })
 
     // Method
@@ -170,7 +183,12 @@
         chainSub()
     }
     const chainSub = () =>{
-        subRef.value?.removeDuplicate(mainOp.value.key)
+        subCardRefs.value?.forEach((subRef) => {
+            subRef.removeDuplicate(mainOp.value.key)
+        })
+    }
+    const setNewSubCard = () => {
+        subCardCount.value++
     }
 
 </script>
