@@ -105,9 +105,9 @@ import { Ref } from 'vue';
     })
     const logicList = [
         {key: 'all', label: 'すべてを含む'},
-        {key: 'get1', label: 'のうち１つ以上を含む'},
-        {key: 'get2', label: 'のうち２つ以上を含む'},
-        {key: 'get3', label: 'のうち３つ以上を含む'},
+        {key: 'get1', label: 'うち１つ以上を含む'},
+        {key: 'get2', label: 'うち２つ以上を含む'},
+        {key: 'get3', label: 'うち３つ以上を含む'},
     ]
 
     // Data
