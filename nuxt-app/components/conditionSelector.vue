@@ -11,7 +11,7 @@
                             v-model="artifact"
                             value-key="key"
                             v-on:change="chainMainAndSub"
-                            style="width: 300px"
+                            class="input-option"
                         >
                             <el-option
                                 v-for="item in artifactTypes"
@@ -32,7 +32,7 @@
                             value-key="key"
                             :disabled="artifact.mainOptions.length==1"
                             v-on:change="chainSub"
-                            style="width: 300px"
+                            class="input-option"
                         >
                             <template v-for="a in artifactTypes" >
                                 <template v-if="a.key === artifact.key">
@@ -105,6 +105,9 @@
 }
 .el-checkbox {
     --el-checkbox-checked-text-color: var(--el-text-color-regular);
+}
+.input-option {
+    width: 250px;
 }
 </style>
 

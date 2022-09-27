@@ -11,7 +11,7 @@
                     multiple
                     :multiple-limit="4"
                     placeholder=" "
-                    class="input-option"
+                    class="input-sub-option"
                 >
                     <el-option
                         v-for="item in subOptions"
@@ -81,10 +81,10 @@
 </template>
 
 <style>
-    .input-option {
+    .input-sub-option {
         width: 300px;
     }
-    .input-option {
+    .input-logic {
         width: 200px;
     }
 
