@@ -2,6 +2,24 @@
     <el-card class="card-sub-option">
         <el-row>
             <el-col :span="19">
+                <span>パターン{{props.index+1}}</span>
+            </el-col>
+            <el-col :span="5">
+                <div class="prob-box">
+                    <el-space wrap>
+                        <span> {{(totalProb).toFixed(4)}} %</span>
+                        <el-button
+                            :icon="Delete"
+                            size="small"
+                            circle
+                            v-on:click="deleteThis"
+                        />
+                    </el-space>
+                </div>
+            </el-col>
+        </el-row>
+        <el-row>
+            <el-col :span="19">
                 <div class="check-box-sub-option">
                     <ClientOnly>
                         <el-tooltip
@@ -24,22 +42,9 @@
                     </ClientOnly>
                 </div>
             </el-col>
-            <el-col :span="5">
-            <div class="prob-box">
-                <el-space wrap>
-                    <span> {{(totalProb).toFixed(4)}} %</span>
-                    <el-button
-                        :icon="Delete"
-                        size="small"
-                        circle
-                        v-on:click="deleteThis"
-                    />
-                </el-space>
-            </div>
-        </el-col>
         </el-row>
         <el-row>
-            <el-col :span="11">
+            <el-col :span="9">
                 <ClientOnly>
                     <el-select
                         v-model="subCards[props.index].subOps"
@@ -72,7 +77,7 @@
                     </el-select>
                 </ClientOnly>
             </el-col>
-            <el-col :span="13">
+            <el-col :span="7">
                 <span> の </span>
                 <ClientOnly>
                     <el-select
@@ -87,6 +92,14 @@
                         />
                     </el-select>
                 </ClientOnly>
+            </el-col>
+            <el-col :span="2">
+                <el-button
+                    class="button-or"
+                    v-on:click=""
+                    disabled
+                >AND</el-button>
+
             </el-col>
         </el-row>
     </el-card>

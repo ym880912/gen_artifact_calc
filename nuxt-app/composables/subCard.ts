@@ -12,7 +12,7 @@ export const useSubCards = () =>{
     return subCards.value
 }
 
-export const createSubCard =() => {
+export const createSubCard = () => {
     const subCards = useSubCards()
     subCards.push({
         subOps: ref([]),
@@ -25,6 +25,9 @@ export const createSubCard =() => {
 export const deleteSubCard = (index: number) => {
     const subCards = useState('subCards')
     subCards.value.splice(index, 1)
+    if (subCards.value.length === 0) {
+        createSubCard()
+    }
 }
 
 export const useSubCardCount = () => {
@@ -100,5 +103,5 @@ const checkLogic = (count: number, index: number): boolean => {
 }
 
 export const removeDuplicate = (key: string) => {
-
+    const subCards = useState()
 }

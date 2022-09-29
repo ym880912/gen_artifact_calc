@@ -70,22 +70,24 @@
                     </el-col>
                 </el-row>
                 <el-row>
-                    <template
-                        v-for=" n of subCards.length "
-                        :key="n-1"
-                    >
-                        <sub-option-or-card
-                            :main-op="mainOp"
-                            :roll-map="rollMap"
-                            :index="n-1"
-                        />
-                    </template>
-                    <el-card class="card-sub-option card-new">
-                        <el-button
-                            class="button-or"
-                            v-on:click="createSubCard"
-                        >OR</el-button>
-                    </el-card>
+                    <el-scrollbar class="container-sub-option" max-height="500px">
+                        <template
+                            v-for=" n of subCards.length "
+                            :key="n-1"
+                        >
+                            <sub-option-or-card
+                                :main-op="mainOp"
+                                :roll-map="rollMap"
+                                :index="n-1"
+                            />
+                        </template>
+                        <el-card class="card-sub-option card-new">
+                            <el-button
+                                class="button-or"
+                                v-on:click="createSubCard"
+                            >OR</el-button>
+                        </el-card>
+                    </el-scrollbar>
                 </el-row>
             </el-card>
         </el-row>
@@ -112,9 +114,12 @@
 .input-main-option {
     width: 250px;
 }
-.card-sub-option {
+.container-sub-option {
     width: 100%;
-    margin: 10px 10px 0px 10px;
+    padding: 10px 5px 5px 10px;
+}
+.card-sub-option {
+    margin-bottom: 10px;
 }
 .card-sub-option:last-child {
     margin-bottom: 0px;
