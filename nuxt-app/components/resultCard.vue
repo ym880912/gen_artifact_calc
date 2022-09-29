@@ -1,5 +1,5 @@
 <template>
-    <el-card class="card-main">
+    <el-card class="card-main card-result">
         <ClientOnly>
             <el-row class="result-row">
                 <span>ドロップ期待値</span>
@@ -49,6 +49,9 @@
 <style>
 .result-row {
     margin: 7px 0px;
+}
+.card-result {
+    height: 100%;
 }
 </style>
 

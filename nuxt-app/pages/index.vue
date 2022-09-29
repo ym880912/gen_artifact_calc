@@ -1,11 +1,30 @@
 <template>
     <div class="content">
         <el-row :gutter="10">
-            <el-col :span="9">
+            <el-col :span="7">
                 <result-card :total-prob="totalProb" />
             </el-col>
-            <el-col :span="15">
-                <el-card class="card-main card-info"></el-card>
+            <el-col :span="17">
+                <el-card class="card-main card-info">
+                    <span>
+                        聖遺物ドロップ率計算機(α版)
+                    </span>
+                    <br />
+                    <br />
+                    <span>・この計算機は統計データをもとにドロップ率を推定するツールであり、計算結果通りに実際に聖遺物がドロップすることを担保するものではありません。</span>
+                    <br />
+                    <span>・オプション付与のアルゴリズムは以下のページの情報をもとに作成しています。</span>
+                    <br />
+                    <span>Genshin Impact Wiki </span>
+                    <el-link target="_blank" href="https://genshin-impact.fandom.com/wiki/Artifact/Distribution">Artifact/Distribution</el-link>
+                    <span>, </span>
+                    <el-link target="_blank" href="https://genshin-impact.fandom.com/wiki/Artifact/Occurrence">Artifact/Occurrence</el-link>
+                    <br />
+                    <span>・4オプション聖遺物のドロップ率は、部位・メインOP・サブOPに関わらす一律{{op4Prob}}%であると仮定しています。</span>
+                    <br />
+                    <br />
+                    <span>・複雑な条件を設定した場合、計算に時間がかかる場合やフリーズする場合があります。この計算機を使用したことにより生じたいかなる損害に対し、作者は責任を負わないものとします。</span>
+                </el-card>
             </el-col>
         </el-row>
         <el-row>
@@ -136,7 +155,7 @@
 </style>
 
 <script lang="ts" setup>
-import { artifactTypes, subOptions } from '../const/index'
+import { artifactTypes, subOptions, op4Prob } from '../const/index'
 
     // Data
     const artifact = ref(artifactTypes[0])

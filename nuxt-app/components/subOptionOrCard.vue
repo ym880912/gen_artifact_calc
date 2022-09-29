@@ -7,7 +7,7 @@
             <el-col :span="5">
                 <div class="prob-box">
                     <el-space wrap>
-                        <span> {{(totalProb).toFixed(4)}} %</span>
+                        <span> {{(totalProb > 0.01) ? (totalProb).toFixed(2) : (totalProb).toFixed(4)}} %</span>
                         <el-button
                             :icon="Delete"
                             size="small"
@@ -22,18 +22,11 @@
             <el-col :span="19">
                 <div class="check-box-sub-option">
                     <ClientOnly>
-                        <el-tooltip
-                            class="box-item"
-                            effect="light"
-                            placement="right-end"
-                            :content="'4オプション聖遺物は部位・メインOP・サブOPに関わらす一律'+op4Prob+'%で出現するとした場合'"
-                        >
-                            <el-checkbox
-                                v-model="subCards[props.index].allowOp3"
-                                label="ドロップ時にサブオプションが３つだけの聖遺物を含む"
-                                v-on:change="chainAllowLeveling"
-                            />
-                        </el-tooltip>
+                        <el-checkbox
+                            v-model="subCards[props.index].allowOp3"
+                            label="ドロップ時にサブオプションが３つだけの聖遺物を含む"
+                            v-on:change="chainAllowLeveling"
+                        />
                         <el-checkbox
                             v-model="subCards[props.index].allowLeveling"
                             label="４レベルで追加される４つ目のサブオプションを条件に含む"
@@ -126,7 +119,7 @@
 
 <script lang="ts" setup>
     import { Ref } from 'vue';
-    import { artifactTypes, subOptions, op4Prob } from '../const/index'
+    import { artifactTypes, subOptions } from '../const/index'
     import { Delete } from '@element-plus/icons-vue'
 
     interface Props {
