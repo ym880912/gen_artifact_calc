@@ -64,19 +64,19 @@
                     </el-row>
                     <el-row>
                         <template
-                            v-for="n of subCardCount"
+                            v-for=" n of subCards.length "
                             :key="n-1"
                         >
                             <sub-option-or-card
                                 :main-op="mainOp"
                                 :roll-map="rollMap"
-                                :ref="setSubCardRef"
+                                :index="n-1"
                             />
                         </template>
                         <el-card class="card-sub-option card-new">
                             <el-button
                                 class="button-or"
-                                v-on:click="setNewSubCard"
+                                v-on:click="createSubCard"
                             >OR</el-button>
                         </el-card>
                     </el-row>
@@ -122,17 +122,13 @@
 </style>
 
 <script lang="ts" setup>
-    import { artifactTypes, subOptions } from '../const/index'
+import { artifactTypes, subOptions } from '../const/index'
 
     // Data
     const artifact = ref(artifactTypes[0])
     const mainOp = ref(artifactTypes[0].mainOptions[0])
-    // const subCardCount = ref(1)
-    const subCardCount = useSubCardCount()
-    const subCardRefs = ref([])
-    const setSubCardRef = (v) => {
-        subCardRefs.value.push(v)
-    }
+    const subCards = useSubCards()
+
     // Computed
     const rollMap = computed(() => {
         const remainSubOptions = subOptions.filter((op) => !mainOp.value || op.key !== mainOp.value.key)
@@ -166,10 +162,10 @@
         const mainProb = mainOp.value.prob / 100
 
         let subProb = 0
-        rollMap.value.forEach((map) => {
+        rollMap.value.forEach((roll) => {
             let currentProb = 0
-            subCardRefs.value?.forEach((subRef) => {
-                currentProb = Math.max(currentProb, subRef.checkProb(map))
+            subCards?.forEach((sub, index)=>{
+                currentProb = Math.max(currentProb, checkProb(roll, index))
             })
             subProb += currentProb
         })
@@ -184,12 +180,7 @@
         chainSub()
     }
     const chainSub = () =>{
-        subCardRefs.value?.forEach((subRef) => {
-            subRef.removeDuplicate(mainOp.value.key)
-        })
-    }
-    const setNewSubCard = () => {
-        subCardCount.value++
+        removeDuplicate(mainOp.value.key)
     }
 
 </script>
