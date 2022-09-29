@@ -150,7 +150,7 @@
         props.rollMap?.forEach(roll => {
             subProb += checkProb(roll, props.index)
         })
-        console.log('subProb',subProb)
+        // console.log('subProb',subProb)
 
         return mainProb * subProb;
     })

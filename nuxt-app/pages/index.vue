@@ -1,101 +1,110 @@
 <template>
     <div class="content">
-        <el-row :gutter="20">
-            <el-col :span="18">
-                <el-card class="card-main">
-                    <ClientOnly>
-                        <el-row>
-                            <el-col :span="3">
-                                <span>聖遺物部位</span>
-                            </el-col>
-                            <el-col :span="6">
-                                <el-select
-                                    v-model="artifact"
-                                    value-key="key"
-                                    v-on:change="chainMainAndSub"
-                                    class="input-artifact"
-                                >
-                                    <el-option
-                                        v-for="item in artifactTypes"
-                                        :key="item"
-                                        :label="item.label"
-                                        :value="item"
-                                    />
-                                </el-select>
-                            </el-col>
-                            <el-col :span="3">
-                                <span>メインOP</span>
-                            </el-col>
-                            <el-col :span="9">
-                                <el-select
-                                    v-model="mainOp"
-                                    value-key="key"
-                                    :disabled="artifact.mainOptions.length==1"
-                                    v-on:change="chainSub"
-                                    class="input-main-option"
-                                >
-                                    <template v-for="a in artifactTypes" >
-                                        <template v-if="a.key === artifact.key">
-                                            <el-option
-                                                v-for="item in a.mainOptions"
-                                                :key="item"
-                                                :label="item.label"
-                                                :value="item"
-                                            >
-                                                <span style="float: left">{{ item.label }}</span>
-                                                <span
-                                                    style="
-                                                        float: right;
-                                                        color: var(--el-text-color-secondary);
-                                                        font-size: 11px;
-                                                    "
-                                                >{{ item.prob.toFixed(2) }} %</span>
-                                    </el-option>
-                                        </template>
-                                    </template>
-                                </el-select>
-                            </el-col>
-                        </el-row>
-                    </ClientOnly>
-                    <el-row>
-                        <el-col :span="24">
-                            <span>サブOP</span>
-                        </el-col>
-                    </el-row>
-                    <el-row>
-                        <template
-                            v-for=" n of subCards.length "
-                            :key="n-1"
-                        >
-                            <sub-option-or-card
-                                :main-op="mainOp"
-                                :roll-map="rollMap"
-                                :index="n-1"
-                            />
-                        </template>
-                        <el-card class="card-sub-option card-new">
-                            <el-button
-                                class="button-or"
-                                v-on:click="createSubCard"
-                            >OR</el-button>
-                        </el-card>
-                    </el-row>
-                </el-card>
-            </el-col>
-            <el-col :span="6">
+        <el-row :gutter="10">
+            <el-col :span="9">
                 <result-card :total-prob="totalProb" />
             </el-col>
+            <el-col :span="15">
+                <el-card class="card-main card-info"></el-card>
+            </el-col>
+        </el-row>
+        <el-row>
+            <el-card class="card-main card-condition">
+                <ClientOnly>
+                    <el-row>
+                        <el-col :span="3">
+                            <span>聖遺物部位</span>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-select
+                                v-model="artifact"
+                                value-key="key"
+                                v-on:change="chainMainAndSub"
+                                class="input-artifact"
+                            >
+                                <el-option
+                                    v-for="item in artifactTypes"
+                                    :key="item"
+                                    :label="item.label"
+                                    :value="item"
+                                />
+                            </el-select>
+                        </el-col>
+                        <el-col :span="3">
+                            <span>メインOP</span>
+                        </el-col>
+                        <el-col :span="9">
+                            <el-select
+                                v-model="mainOp"
+                                value-key="key"
+                                :disabled="artifact.mainOptions.length==1"
+                                v-on:change="chainSub"
+                                class="input-main-option"
+                            >
+                                <template v-for="a in artifactTypes" >
+                                    <template v-if="a.key === artifact.key">
+                                        <el-option
+                                            v-for="item in a.mainOptions"
+                                            :key="item"
+                                            :label="item.label"
+                                            :value="item"
+                                        >
+                                            <span style="float: left">{{ item.label }}</span>
+                                            <span
+                                                style="
+                                                    float: right;
+                                                    color: var(--el-text-color-secondary);
+                                                    font-size: 11px;
+                                                "
+                                            >{{ item.prob.toFixed(2) }} %</span>
+                                </el-option>
+                                    </template>
+                                </template>
+                            </el-select>
+                        </el-col>
+                    </el-row>
+                </ClientOnly>
+                <el-row>
+                    <el-col :span="24">
+                        <span>サブOP</span>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <template
+                        v-for=" n of subCards.length "
+                        :key="n-1"
+                    >
+                        <sub-option-or-card
+                            :main-op="mainOp"
+                            :roll-map="rollMap"
+                            :index="n-1"
+                        />
+                    </template>
+                    <el-card class="card-sub-option card-new">
+                        <el-button
+                            class="button-or"
+                            v-on:click="createSubCard"
+                        >OR</el-button>
+                    </el-card>
+                </el-row>
+            </el-card>
         </el-row>
     </div>
 </template>
 
 <style>
 .content {
-    width: 1200px;
+    width: 900px;
     margin: 10px 40px;
 }
 .card-main {
     width: 100%;
+}
+.card-info {
+    height: 100%;
+}
+.card-condition {
+    margin-top: 10px;
 }
 .input-artifact {
     width: 150px;
