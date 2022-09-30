@@ -212,7 +212,7 @@ import { artifactTypes, subOptions, op4Prob } from '../const/index'
         mainOp.value = artifact.value.mainOptions[0]
         chainSub()
     }
-    const chainSub = () =>{
+    const chainSub = () => {
         removeDuplicate(mainOp.value.key)
     }
 

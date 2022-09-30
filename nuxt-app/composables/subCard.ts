@@ -23,25 +23,20 @@ export const createSubCard = () => {
 }
 
 export const deleteSubCard = (index: number) => {
-    const subCards = useState('subCards')
-    subCards.value.splice(index, 1)
-    if (subCards.value.length === 0) {
+    const subCards = useSubCards()
+    subCards.splice(index, 1)
+    if (subCards.length === 0) {
         createSubCard()
     }
 }
 
-export const useSubCardCount = () => {
-    const useSubCardCount = useState('subCardCount', () => ref(1))
-    return useSubCardCount
-}
-
 export const checkProb = (roll:object, index:number): number => {
 
-    const subCards = useState('subCards')
-    if (!subCards.value[index]) {
+    const subCards = useSubCards()
+    if (!subCards[index]) {
         return 0
     }
-    const subCard = subCards.value[index]
+    const subCard = subCards[index]
 
     let prob = 0
     let r3Count = 0
@@ -78,11 +73,11 @@ export const checkProb = (roll:object, index:number): number => {
 
 const checkLogic = (count: number, index: number): boolean => {
 
-    const subCards = useState('subCards')
-    if (!subCards.value[index]) {
+    const subCards = useSubCards()
+    if (!subCards[index]) {
         return false
     }
-    const subCard = subCards.value[index]
+    const subCard = subCards[index]
 
     switch(subCard.logic) {
         case 'all':
@@ -103,5 +98,16 @@ const checkLogic = (count: number, index: number): boolean => {
 }
 
 export const removeDuplicate = (key: string) => {
-    const subCards = useState()
+    const subCards = useSubCards()
+    subCards.forEach((sub) => {
+        let duplicated = false
+        sub.subOps.forEach((op) => {
+            if (op.key === key) {
+                duplicated = true
+            }
+        })
+        if (duplicated) {
+            sub.subOps = []
+        }
+    })
 }
