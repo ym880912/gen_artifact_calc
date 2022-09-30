@@ -30,9 +30,9 @@
         <el-row>
             <el-card class="card-main card-condition">
                 <ClientOnly>
-                    <el-row>
+                    <el-row class="container-input">
                         <el-col :span="3">
-                            <span>聖遺物部位</span>
+                            <span class="label-input">聖遺物部位</span>
                         </el-col>
                         <el-col :span="6">
                             <el-select
@@ -50,7 +50,7 @@
                             </el-select>
                         </el-col>
                         <el-col :span="3">
-                            <span>メインOP</span>
+                            <span class="label-input">メインOP</span>
                         </el-col>
                         <el-col :span="9">
                             <el-select
@@ -83,9 +83,9 @@
                         </el-col>
                     </el-row>
                 </ClientOnly>
-                <el-row>
+                <el-row class="container-input">
                     <el-col :span="24">
-                        <span>サブOP</span>
+                        <span class="label-input">サブOP</span>
                     </el-col>
                 </el-row>
                 <el-row>
@@ -151,6 +151,12 @@
 }
 .card-new {
     text-align: center;
+}
+.label-input {
+    vertical-align: middle;
+}
+.container-input {
+    margin: 3px 0px;
 }
 </style>
 

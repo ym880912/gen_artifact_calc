@@ -49,9 +49,6 @@ export const checkProb = (roll:object, index:number): number => {
             r4Count++
         }
     })
-    // console.log(r3Count, r4Count)
-
-    if (r4Count >= subCard.subOps.length) return roll.prob
 
     if (checkLogic(r3Count, index)) {
         if (subCard.allowOp3) {
