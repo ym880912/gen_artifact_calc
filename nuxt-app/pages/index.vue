@@ -20,7 +20,7 @@
                     <span>, </span>
                     <el-link target="_blank" href="https://genshin-impact.fandom.com/wiki/Artifact/Occurrence">Artifact/Occurrence</el-link>
                     <br />
-                    <span>・4オプション聖遺物のドロップ率は、部位・メインOP・サブOPに関わらす一律{{op4Prob}}%であると仮定しています。</span>
+                    <span>・4オプション聖遺物のドロップ率{{op4Prob}}%、秘境の聖遺物2個ドロップ率{{drop2Prob}}%として計算しています。</span>
                     <br />
                     <br />
                     <span>・大量の条件を設定すると、計算に時間がかかる場合やフリーズする場合があります。この計算機を使用したことにより生じるいかなる損害に対し、作者は責任を負わないものとします。</span>
@@ -161,7 +161,7 @@
 </style>
 
 <script lang="ts" setup>
-import { artifactTypes, subOptions, op4Prob } from '../const/index'
+import { artifactTypes, subOptions, op4Prob, drop2Prob } from '../const/index'
 
     // Data
     const artifact = ref(artifactTypes[0])

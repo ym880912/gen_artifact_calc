@@ -44,4 +44,5 @@ export const subOptions = [
 
 ];
 
-export const op4Prob = 40
+export const op4Prob = 20
+export const drop2Prob = 7

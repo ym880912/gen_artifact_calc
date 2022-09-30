@@ -56,6 +56,7 @@
 </style>
 
 <script lang="ts" setup>
+    import { drop2Prob } from '../const/index'
     interface Props {
         totalProb: number
     }
@@ -65,7 +66,7 @@
 
     // Computed
     const resinExpected  = computed(() => {
-        return 40 * 5 * 100 / props.totalProb
+        return 40 * 100 / (100 + drop2Prob) * 5 * 100 / props.totalProb
     })
     const strongBoxExpected = computed(() => {
         return 5 * 100 / props.totalProb
